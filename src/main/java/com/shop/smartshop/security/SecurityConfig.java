@@ -37,16 +37,16 @@
                             .requestMatchers("/public/**").permitAll()
                             .requestMatchers("/product/**").authenticated()
                             // ❗ Important: authenticate everything else
-                            .anyRequest().authenticated()
+                            .anyRequest().permitAll()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .oauth2Login(oAuth2 -> oAuth2
-                            .loginPage("/oauth2/authorization/google")
-                            .failureHandler((request, response, exception) -> {
-                                log.error("OAuth2 error: {}", exception.getMessage());
-                            })
-                            .successHandler((googleOAuth2SuccessHandler))
-                    )
+//                    .oauth2Login(oAuth2 -> oAuth2
+//                            .loginPage("/oauth2/authorization/google")
+//                            .failureHandler((request, response, exception) -> {
+//                                log.error("OAuth2 error: {}", exception.getMessage());
+//                            })
+//                            .successHandler((googleOAuth2SuccessHandler))
+//                    )
                     .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
             return http.build();
