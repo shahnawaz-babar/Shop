@@ -1,0 +1,2 @@
+ALTER TABLE products
+ADD COLUMN view_count BIGINT DEFAULT 0;
