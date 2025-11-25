@@ -7,5 +7,7 @@ import lombok.Data;
 public class LoginRequest {
     @NotBlank(message = "Mobile number is required")
     private String mobileNumber;
+    @NotBlank(message = "email is required")
+    private String email;
 
 }

@@ -1,6 +1,7 @@
     package com.shop.smartshop.security;
 
     import com.shop.smartshop.filter.JwtAuthenticationFilter;
+    import com.shop.smartshop.service.CustomOAuth2UserService;
     import lombok.RequiredArgsConstructor;
     import lombok.extern.slf4j.Slf4j;
     import org.springframework.context.annotation.Bean;
@@ -25,7 +26,8 @@
     public class SecurityConfig {
 
         private final JwtAuthenticationFilter jwtAuthFilter;
-        private final GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
+        private final CustomOAuth2UserService customOAuth2UserService;
+
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,11 +35,19 @@
                     .csrf(csrf -> csrf.disable())
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/public/**").permitAll()
+                            .requestMatchers(
+                                    "/auth/google",
+                                    "/auth/**",
+                                    "/public/**",
+                                    "/health/**",
+                                    "/index.html",
+                                    "/static/**"
+                            ).permitAll()
+
+                            // Protected APIs
                             .requestMatchers("/product/**").authenticated()
-                            // ❗ Important: authenticate everything else
-                            .anyRequest().permitAll()
+
+                            .anyRequest().authenticated()
                     )
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                    .oauth2Login(oAuth2 -> oAuth2
@@ -47,8 +57,13 @@
 //                            })
 //                            .successHandler((googleOAuth2SuccessHandler))
 //                    )
+//                    .oauth2Login(oauth -> oauth
+//                                    .loginPage("/auth/login")
+//                                    .userInfoEndpoint(userInfo-> userInfo
+//                                            .userService(customOAuth2UserService)
+//                                    )
+//                    )
                     .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
             return http.build();
         }
 

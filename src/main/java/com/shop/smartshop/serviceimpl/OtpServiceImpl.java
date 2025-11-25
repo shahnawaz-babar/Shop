@@ -97,6 +97,36 @@ public class OtpServiceImpl implements OtpService {
         return true;
     }
 
+    @Override
+    public String generateOtpForEmail(String identifier) {
+
+        Otp prevOtp=otpRepository.findByEmailAndVerifiedFalseAndBlockedFalse(identifier).orElse(null);
+        if(prevOtp!=null)
+        {
+            otpRepository.findByEmailAndVerifiedFalseAndBlockedFalse(prevOtp.getMobileNumber());
+            log.info("Otp for this number is Already Present {},Deleted",prevOtp.getMobileNumber());
+            log.info("New Otp generated {}",prevOtp.getMobileNumber());
+        }
+
+        String code = generateRandomCode();
+        // Create new OTP
+        Otp otp = Otp.builder()
+                .identifier(identifier)
+                .code(code)
+                .verified(false)
+                .blocked(false)
+                .expiresAt(LocalDateTime.now().plusMinutes(2))
+                .build();
+        otp.setMobileNumber(identifier);
+        // Format the mobile number with +91 prefix if it doesn't have a country code
+        String formattedMobile = identifier.startsWith("+") ? identifier : "+91" + identifier;
+        // Use the standard message format required by Digital SMS API
+        String message = "Your Smart Shop verification code is: " + code + ". Do not share this code with anyone. It is valid for 2 minutes.";
+        otpRepository.save(otp);
+        log.info("Generated OTP for {}: {}", identifier, code);
+        return code;
+    }
+
     private String generateRandomCode() {
         int code = 100000 + random.nextInt(900000);
         return String.valueOf(code);

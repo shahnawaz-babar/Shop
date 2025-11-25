@@ -95,6 +95,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+
     // ====================== LOGIN (SEND OTP) ======================
     @Override
     public TokenResponse login(LoginRequest request) {
@@ -112,6 +113,28 @@ public class AuthServiceImpl implements AuthService {
                 .otp(otp)
                 .build();
     }
+
+
+    // ====================== LOGIN (SEND OTP IN EMAIL) ======================
+    @Override
+    public TokenResponse loginWithEmail(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AuthException("User not found with this email"));
+
+        // Generate email OTP
+        String otp = otpService.generateOtpForEmail(request.getEmail());
+
+        log.info("OTP sent to email {}: {}", request.getEmail(), otp);
+
+        return TokenResponse.builder()
+                .success(true)
+                .message("OTP sent successfully to email")
+                .otp(otp)    // send OTP only for dev mode
+                .build();
+    }
+
+
 
 
 

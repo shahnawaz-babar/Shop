@@ -1,5 +1,7 @@
 package com.shop.smartshop.service;
 
+import jakarta.validation.constraints.NotBlank;
+
 public interface OtpService {
 
     /**
@@ -18,4 +20,6 @@ public interface OtpService {
      * @return true if OTP is valid and verified successfully, false otherwise
      */
     boolean verifyOtp(String identifier, String code);
+
+    String generateOtpForEmail(@NotBlank @NotBlank(message = "Mobile number is required") String email);
 }

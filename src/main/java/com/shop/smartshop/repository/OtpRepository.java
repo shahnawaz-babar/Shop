@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface OtpRepository extends JpaRepository<Otp,Long> {
 
     Optional<Otp> findByMobileNumberAndVerifiedFalseAndBlockedFalse(String mobileNumber);
+    Optional<Otp> findByEmailAndVerifiedFalseAndBlockedFalse(String mobileNumber);
     void deleteByMobileNumberAndVerifiedFalseAndBlockedFalse(String mobileNumber);
     void deleteByExpiresAt(LocalDateTime expiresAt);
 

@@ -5,6 +5,7 @@ import com.shop.smartshop.dto.*;
 import com.shop.smartshop.entity.User;
 import com.shop.smartshop.exception.ResourceNotFoundException;
 import com.shop.smartshop.repository.UserRepository;
+import com.shop.smartshop.security.GoogleAuthService;
 import com.shop.smartshop.service.AuthService;
 import com.shop.smartshop.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -28,6 +29,14 @@ public class AuthController {
     private final AuthService authService;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+
+
+    private final GoogleAuthService googleAuthService;
+
+    @PostMapping("/google")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequestDTO request) {
+        return ResponseEntity.ok(googleAuthService.loginWithGoogle(request.getIdToken()));
+    }
 
     // generate otp
 

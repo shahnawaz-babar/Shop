@@ -32,6 +32,8 @@ public class User {
     private String email;
     private String password;
     private String address;
+    private String imageUrl;
+    private String authProvider;
     @Column(length = 512)
     private String profileImageUrl;
     @ElementCollection(fetch = FetchType.EAGER)
